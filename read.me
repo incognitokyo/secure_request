@@ -1,0 +1,42 @@
+React Part Explanation:
+Hash Generation:
+
+We use crypto.subtle.digest() to create the SHA-256 hash in JavaScript. This method returns a Promise, so we need to await the hash generation.
+The TextEncoder().encode() encodes the string to a Uint8Array before hashing.
+The hash is then converted into a hexadecimal string to match the PHP hash('sha256', $string) output.
+fetch() API:
+
+We use the fetch() API to send a POST request to http://www.myproject.com/checkRequest.
+The request's body is converted to JSON using JSON.stringify(), and the appropriate headers (Content-Type: 'application/json') are set.
+Handling Response:
+
+After sending the request, the response is awaited and then displayed on the page.
+We update the state using setResponse() to show the server response.
+Error Handling:
+
+Any errors in the fetch request are caught and logged, and the error message is displayed.
+Additional Notes:
+CORS: Ensure that http://www.myproject.com/checkRequest allows cross-origin requests (CORS) from your React application. If not, you may encounter CORS errors.
+Backend: The backend should handle the POST request and check the hash, similar to what you have in your PHP code.
+
+
+
+PHP Server Recieve Part Explanation
+Explanation:
+Secret Key:
+The $secret_key is the same shared secret used when generating the hash in React (or any client-side application).
+
+Retrieve POST Data:
+The $_POST array is used to access the incoming user_id, amount, TRX, and hash values. These values are fetched with null checks (?? '') to ensure that the script doesn't crash if any value is missing.
+
+Hash Recalculation:
+The server recalculates the hash using the received user_id, amount, TRX, and the shared $secret_key.
+
+Hash Verification:
+The newly generated hash ($expected_hash) is compared with the received hash ($received_hash). If they match, it means the request is valid.
+
+Response:
+
+If the hash is valid, a JSON response with { "status": "success", "message": "Request is valid" } is returned.
+If the hash doesn't match, the response will be { "status": "error", "message": "Invalid hash" }.
+If required fields are missing, an appropriate error message is returned.
